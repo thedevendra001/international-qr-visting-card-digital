@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- ── SEO — dynamically updated by JS ── -->
+    <title>Digital Business Card</title>
+    <meta name="description" id="metaDescription" content="Professional digital business card — share your contact, social, and business details instantly.">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" id="ogTitle" content="Digital Business Card">
+    <meta property="og:description" id="ogDesc" content="Connect with me — tap to save my contact.">
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- ── International Person Schema ── -->
+    <script type="application/ld+json" id="personSchema">
+    { "@context": "https://schema.org", "@type": "Person", "name": "Loading..." }
+    </script>
+
+    <!-- ── Fonts ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ── Font Awesome icons ── -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+    /* ============================================================
+       DESIGN SYSTEM — Premium Card
+       Dark navy header · Clean white body · Teal-blue accents
+    ============================================================ */
+    :root {
+        --header-from:  #0f172a;
+        --header-to:    #1e3a5f;
+        --accent:       #0ea5e9;
+        --accent-dark:  #0284c7;
+        --accent-light: #bae6fd;
+        --accent-glow:  rgba(14,165,233,.2);
+        --green:        #10b981;
+        --purple:       #8b5cf6;
+        --orange:       #f59e0b;
+
+        --bg:           #f1f5f9;
+        --card:         #ffffff;
+        --section-bg:   #f8fafc;
+        --border:       #e2e8f0;
+
+        --text-1:       #0f172a;
+        --text-2:       #475569;
+        --text-3:       #94a3b8;
+
+        --radius-sm:    8px;
+        --radius:       14px;
+        --radius-lg:    20px;
+        --radius-xl:    28px;
+
+        --shadow-sm:    0 1px 3px rgba(0,0,0,.06);
+        --shadow:       0 4px 16px rgba(0,0,0,.08);
+        --shadow-lg:    0 12px 48px rgba(0,0,0,.14);
+        --shadow-card:  0 24px 64px rgba(15,23,42,.18);
+
+        --font-display: 'Nunito', sans-serif;
+        --font-body:    'Nunito Sans', sans-serif;
+        --transition:   all .22s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+        font-family: var(--font-body);
+        background: var(--bg);
+        min-height: 100dvh;
+        padding: 0 0 96px;  /* bottom padding for sticky bar */
+        background-image:
+            radial-gradient(ellipse 60% 40% at 50% 0, rgba(14,165,233,.07) 0%, transparent 60%);
+    }
+
+    /* ── Page loader ── */
+    .page-loader {
+        position: fixed; inset: 0; z-index: 9999;
+        background: var(--header-from);
+        display: flex; align-items: center; justify-content: center;
+        flex-direction: column; gap: 16px;
+        transition: opacity .5s ease, visibility .5s ease;
+    }
+    .page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-logo {
+        font-family: var(--font-display);
+        font-size: 32px; font-weight: 800;
+        color: var(--accent); letter-spacing: -.02em;
+    }
+    .loader-ring {
+        width: 36px; height: 36px;
+        border: 3px solid rgba(255,255,255,.1);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ══════════════════════════════════════════════════
+       CARD CONTAINER
+    ══════════════════════════════════════════════════ */
+    .card-outer {
+        width: 100%; max-width: 480px;
+        margin: 0 auto;
+        padding: 0 0 20px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HEADER — DARK NAVY
+    ══════════════════════════════════════════════════ */
+    .card-header {
+        background: linear-gradient(160deg, var(--header-from) 0%, var(--header-to) 100%);
+        padding: 52px 28px 36px;
+        text-align: center;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+    .card-header::before {
+        content: '';
+        position: absolute; inset: 0;
+        background:
+            radial-gradient(ellipse 60% 60% at 50% -10%, rgba(14,165,233,.18) 0%, transparent 70%),
+            radial-gradient(circle at 90% 90%, rgba(139,92,246,.12) 0%, transparent 40%);
+        pointer-events: none;
+    }
+    .card-header::after {
+        content: '';
+        position: absolute; bottom: -1px; left: 0; right: 0;
+        height: 40px;
+        background: var(--bg);
+        clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    /* ── Profile image ── */
+    .profile-wrap {
+        position: relative; display: inline-block;
+        margin-bottom: 18px;
+        animation: scaleIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .profile-image {
+        width: 108px; height: 108px; border-radius: 50%;
+        border: 4px solid rgba(255,255,255,.9);
+        object-fit: cover; display: block;
+        box-shadow: 0 8px 32px rgba(0,0,0,.3), 0 0 0 8px rgba(255,255,255,.06);
+    }
+    .profile-placeholder {
+        width: 108px; height: 108px; border-radius: 50%;
+        border: 4px solid rgba(255,255,255,.7);
+        background: linear-gradient(135deg, rgba(14,165,233,.3), rgba(139,92,246,.3));
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display);
+        font-size: 40px; font-weight: 800; color: #fff;
+        box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    }
+    .profile-status {
+        position: absolute; bottom: 6px; right: 6px;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: var(--green);
+        border: 3px solid var(--header-from);
+        animation: pulse-green 2s ease infinite;
+    }
+    @keyframes pulse-green {
+        0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,.4); }
+        50%      { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+    }
+
+    .card-name {
+        font-family: var(--font-display);
+        font-size: 26px; font-weight: 800;
+        color: #fff; letter-spacing: -.02em;
+        margin-bottom: 5px;
+        animation: fadeSlideUp .4s .1s ease both;
+    }
+    .card-designation {
+        font-size: 15px; font-weight: 600;
+        color: rgba(255,255,255,.8);
+        margin-bottom: 3px;
+        animation: fadeSlideUp .4s .18s ease both;
+    }
+    .card-business {
+        font-size: 13px; font-weight: 500;
+        color: var(--accent-light);
+        animation: fadeSlideUp .4s .24s ease both;
+    }
+
+    /* ── Quick action chips in header ── */
+    .header-chips {
+        display: flex; gap: 8px; justify-content: center;
+        flex-wrap: wrap; margin-top: 20px; position: relative; z-index: 1;
+        animation: fadeSlideUp .4s .32s ease both;
+    }
+    .header-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+        border-radius: 50px; padding: 6px 14px;
+        font-size: 12px; font-weight: 600; color: #fff;
+        text-decoration: none; transition: var(--transition);
+        backdrop-filter: blur(4px);
+    }
+    .header-chip:hover {
+        background: rgba(255,255,255,.18);
+        transform: translateY(-1px);
+        color: #fff;
+    }
+    .header-chip i { font-size: 12px; }
+    .chip-call   { border-color: rgba(16,185,129,.4); }
+    .chip-wa     { border-color: rgba(37,211,102,.4); }
+    .chip-email  { border-color: rgba(14,165,233,.4); }
+
+    /* ══════════════════════════════════════════════════
+       CARD BODY
+    ══════════════════════════════════════════════════ */
+    .card-body {
+        padding: 12px 16px 24px;
+        animation: fadeSlideUp .5s .2s ease both;
+    }
+
+    /* ── Section ── */
+    .section {
+        background: var(--card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+    }
+
+    .section-title {
+        font-family: var(--font-display);
+        font-size: 11px; font-weight: 700;
+        color: var(--text-3);
+        text-transform: uppercase; letter-spacing: .1em;
+        padding: 14px 18px 0;
+        display: flex; align-items: center; gap: 7px;
+    }
+    .section-title i { font-size: 11px; }
+
+    /* ── Contact item ── */
+    .contact-item {
+        display: flex; align-items: center; gap: 14px;
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--border);
+        transition: var(--transition);
+        text-decoration: none;
+        color: inherit;
+    }
+    .contact-item:last-child { border-bottom: none; }
+    .contact-item:hover { background: #f8fafc; }
+
+    .contact-icon {
+        width: 40px; height: 40px; border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; flex-shrink: 0;
+    }
+    .icon-phone    { background: #dcfce7; color: #16a34a; }
+    .icon-whatsapp { background: #dcfce7; color: #25D366; }
+    .icon-email    { background: #dbeafe; color: #2563eb; }
+    .icon-address  { background: #fef3c7; color: #d97706; }
+    .icon-upi      { background: #ede9fe; color: #7c3aed; }
+    .icon-web      { background: #dbeafe; color: #2563eb; }
+    .icon-shop     { background: #fef9c3; color: #ca8a04; }
+
+    .contact-text { flex: 1; min-width: 0; }
+    .contact-label {
+        font-size: 10px; font-weight: 700; color: var(--text-3);
+        text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px;
+    }
+    .contact-value {
+        font-size: 14.5px; font-weight: 600; color: var(--text-1);
+        word-break: break-word; text-decoration: none; display: block;
+    }
+    .contact-value:hover { color: var(--accent-dark); }
+
+    .contact-arrow {
+        color: var(--text-3); font-size: 12px;
+        transition: var(--transition); flex-shrink: 0;
+    }
+    .contact-item:hover .contact-arrow { color: var(--accent); transform: translateX(2px); }
+
+    /* ── UPI block ── */
+    .upi-block { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .upi-pay-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #fff; text-decoration: none; border-radius: var(--radius-sm);
+        padding: 7px 14px; font-size: 12px; font-weight: 700;
+        transition: var(--transition);
+        box-shadow: 0 3px 10px rgba(124,58,237,.3);
+    }
+    .upi-pay-btn:hover { transform: translateY(-1px); color: #fff; box-shadow: 0 5px 14px rgba(124,58,237,.4); }
+    .upi-copy-btn, .address-copy-btn {
+        background: none; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+        padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--text-2);
+        cursor: pointer; transition: var(--transition);
+        display: inline-flex; align-items: center; gap: 5px;
+        font-family: var(--font-body);
+    }
+    .upi-copy-btn:hover, .address-copy-btn:hover {
+        background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .upi-id-text { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+
+    /* ── Contact 2 block ── */
+    .contact2-card {
+        background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
+        border: 1.5px solid #c7d2fe; border-radius: var(--radius);
+        padding: 16px 18px; margin: 0 0 0 0;
+    }
+    .contact2-name {
+        font-size: 15px; font-weight: 700; color: #1e3a5f;
+        margin-bottom: 2px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .contact2-role {
+        font-size: 12px; color: var(--purple); font-weight: 600;
+        margin-bottom: 10px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .contact2-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .contact2-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+        padding: 7px 12px; font-size: 12px; font-weight: 600; color: var(--text-2);
+        text-decoration: none; transition: var(--transition);
+        min-width: 0; max-width: 100%;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .contact2-link:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Social grid ── */
+    .social-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px; padding: 12px 18px 16px;
+    }
+    .social-btn {
+        display: flex; align-items: center; justify-content: center; gap: 7px;
+        padding: 11px 10px; color: #fff; text-decoration: none;
+        border-radius: var(--radius); font-weight: 700; font-size: 12.5px;
+        transition: var(--transition);
+        box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+    .social-btn:hover { transform: translateY(-2px); opacity: .9; }
+    .social-btn i { font-size: 15px; }
+    .btn-instagram { background: linear-gradient(135deg, #f09433, #e6683c, #E4405F, #bc1888); }
+    .btn-facebook  { background: #1877F2; }
+    .btn-linkedin  { background: #0A66C2; }
+    .btn-twitter   { background: #000; }
+    .btn-youtube   { background: #FF0000; }
+    .btn-telegram  { background: #229ED9; }
+
+    /* ── Map embed ── */
+    .map-embed {
+        border-radius: var(--radius-lg); overflow: hidden;
+        border: 1px solid var(--border); margin-bottom: 12px;
+        box-shadow: var(--shadow-sm);
+    }
+    .map-embed iframe {
+        width: 100%; height: 200px; border: none; display: block;
+    }
+
+    /* ── QR code section ── */
+    .qr-section {
+        background: var(--card); border-radius: var(--radius-lg);
+        border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+        padding: 18px; text-align: center; margin-bottom: 12px;
+    }
+    .qr-section img { width: 120px; height: 120px; border-radius: var(--radius-sm); }
+    .qr-label {
+        font-size: 12px; font-weight: 600; color: var(--text-3);
+        margin-top: 10px; letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+    .qr-sublabel { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+    /* ── Action buttons ── */
+    .action-row {
+        display: flex; gap: 10px; padding: 0 16px; margin-bottom: 12px;
+    }
+    .action-btn {
+        flex: 1; padding: 14px 12px;
+        border-radius: var(--radius); font-family: var(--font-display);
+        font-size: 13.5px; font-weight: 700; text-align: center;
+        text-decoration: none; display: flex; align-items: center;
+        justify-content: center; gap: 8px;
+        cursor: pointer; border: none; transition: var(--transition);
+    }
+    .action-btn:not(:disabled):hover { transform: translateY(-2px); }
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent-dark), #0369a1);
+        color: #fff; box-shadow: 0 4px 14px rgba(14,165,233,.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(14,165,233,.45); color: #fff; }
+    .btn-secondary {
+        background: var(--card); color: var(--text-1);
+        border: 1.5px solid var(--border) !important;
+        box-shadow: var(--shadow-sm);
+    }
+    .btn-secondary:hover { border-color: var(--accent) !important; color: var(--accent); }
+
+    /* ══════════════════════════════════════════════════
+       STICKY FLOATING ACTION BAR — CTA always visible
+    ══════════════════════════════════════════════════ */
+    .sticky-bar {
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+        background: rgba(15,23,42,.96);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border-top: 1px solid rgba(255,255,255,.1);
+        padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+        display: none; /* shown by JS once card loads */
+    }
+    .sticky-bar-inner {
+        max-width: 480px; margin: 0 auto;
+        display: flex; gap: 10px;
+    }
+    .sticky-btn {
+        flex: 1; display: flex; align-items: center; justify-content: center;
+        gap: 8px; padding: 13px 10px;
+        border-radius: var(--radius); border: none;
+        font-family: var(--font-display);
+        font-size: 13.5px; font-weight: 700;
+        text-decoration: none; cursor: pointer; transition: var(--transition);
+    }
+    .sticky-btn i { font-size: 15px; }
+    .sticky-btn-call  { background: var(--green); color: #fff; }
+    .sticky-btn-wa    { background: #25D366; color: #fff; }
+    .sticky-btn-save  { background: var(--accent); color: #fff; }
+    .sticky-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    /* ── Footer ── */
+    .card-footer {
+        text-align: center; padding: 16px;
+        font-size: 12px; color: var(--text-3);
+        margin-top: 4px;
+    }
+    .card-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .card-footer a:hover { text-decoration: underline; }
+
+    /* ── Error state ── */
+    .error-container {
+        text-align: center; padding: 80px 28px;
+        max-width: 480px; margin: 0 auto;
+    }
+    .error-icon { font-size: 56px; margin-bottom: 20px; opacity: .6; }
+    .error-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-1); margin-bottom: 10px; }
+    .error-message { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+    .error-cta {
+        display: inline-block; margin-top: 24px;
+        background: var(--accent); color: #fff;
+        padding: 12px 24px; border-radius: var(--radius);
+        font-weight: 700; font-size: 14px; text-decoration: none;
+        transition: var(--transition);
+    }
+    .error-cta:hover { background: var(--accent-dark); color: #fff; }
+
+    /* ── Animations ── */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(.7); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Dark mode ── */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg:         #0f172a;
+            --card:       #1e293b;
+            --section-bg: #1a2942;
+            --border:     #334155;
+            --text-1:     #f1f5f9;
+            --text-2:     #94a3b8;
+            --text-3:     #64748b;
+        }
+        .card-header::after { background: var(--bg); }
+        .contact-item:hover { background: #253347; }
+        .sticky-bar { background: rgba(15,23,42,.98); }
+        .icon-phone    { background: #064e30; }
+        .icon-whatsapp { background: #064e30; }
+        .icon-email    { background: #1e3a5f; }
+        .icon-address  { background: #451a03; }
+        .icon-upi      { background: #2e1065; }
+        .upi-copy-btn, .address-copy-btn { border-color: #334155; color: #94a3b8; }
+        .contact2-card { background: linear-gradient(135deg, #1e3a5f, #2e1065); border-color: #334155; }
+        .contact2-link { background: #1e293b; border-color: #334155; color: #94a3b8; }
+        .btn-secondary { background: #1e293b; color: var(--text-1); }
+        .qr-section { background: #1e293b; border-color: #334155; }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+        body { padding-bottom: 80px; }
+        .card-header { padding: 44px 20px 32px; }
+        .card-name { font-size: 22px; }
+        .social-grid { grid-template-columns: repeat(2, 1fr); }
+        .header-chips { gap: 6px; }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ── Page loader ── -->
+<div class="page-loader" id="pageLoader">
+    <div class="loader-logo">NFC</div>
+    <div class="loader-ring"></div>
+</div>
+
+<!-- ── Error state ── -->
+<div id="errorState" style="display:none;">
+    <div class="error-container">
+        <div class="error-icon">🔍</div>
+        <h2 class="error-title">Card Not Found</h2>
+        <p class="error-message" id="errorMessage">This card could not be loaded. Please check the URL or contact the person who shared it with you.</p>
+        <a href="https://thedevendra001.github.io/QR-FOR-DIGITAL-CARD-/" class="error-cta">Get Your Own Card →</a>
+    </div>
+</div>
+
+<!-- ── Loading state (shown while API call in flight) ── -->
+<div id="loadingState" style="display:none;text-align:center;padding:80px 20px;">
+    <div style="width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:#0ea5e9;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;"></div>
+    <p style="font-size:14px;color:#94a3b8;font-family:var(--font-body)">Loading card…</p>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CARD CONTENT — rendered by JS
+══════════════════════════════════════════════ -->
+<div id="cardContent" style="display:none;">
+
+    <div class="card-outer">
+
+        <!-- ── HEADER ── -->
+        <div class="card-header">
+            <div class="profile-wrap">
+                <div id="profileImageContainer"></div>
+                <div class="profile-status" title="Available"></div>
+            </div>
+
+            <h1 class="card-name" id="cardName"></h1>
+            <div id="cardDesignation"></div>
+            <div id="cardBusiness"></div>
+
+            <!-- Quick contact chips (filled by JS) -->
+            <div class="header-chips" id="headerChips"></div>
+        </div>
+
+        <!-- ── BODY ── -->
+        <div class="card-body">
+
+            <!-- Contact section -->
+            <div class="section" id="contactSection">
+                <div class="section-title">
+                    <i class="fa-solid fa-address-card"></i> Contact Details
+                </div>
+                <div id="contactItems"></div>
+            </div>
+
+            <!-- Contact 2 section -->
+            <div class="section" id="contact2Section" style="display:none;">
+                <div class="section-title">
+                    <i class="fa-solid fa-user-group"></i> Team / Additional Contact
+                </div>
+                <div style="padding:12px 14px 14px" id="contact2Block"></div>
+            </div>
+
+            <!-- Social section -->
+            <div class="section" id="socialSection" style="display:none;">
+                <div class="section-title">
+                    <i class="fa-solid fa-share-nodes"></i> Follow &amp; Connect
+                </div>
+                <div class="social-grid" id="socialLinks"></div>
+            </div>
+
+            <!-- Additional (website, products) section -->
+            <div class="section" id="additionalSection" style="display:none;">
+                <div class="section-title">
+                    <i class="fa-solid fa-circle-info"></i> Online Presence
+                </div>
+                <div id="additionalItems"></div>
+            </div>
+
+            <!-- Google Maps embed (shown if maps link present) -->
+            <div class="map-embed" id="mapSection" style="display:none;">
+                <iframe id="mapFrame" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade" title="Location map"></iframe>
+            </div>
+
+            <!-- QR code (if available from backend) -->
+            <div class="qr-section" id="qrSection" style="display:none;">
+                <img id="qrImage" alt="QR Code for this card">
+                <div class="qr-label">Scan to open this card</div>
+                <div class="qr-sublabel">Works with any camera app</div>
+            </div>
+
+            <!-- Save contact + Share buttons -->
+            <div class="action-row">
+                <a href="#" id="saveContactBtn" class="action-btn btn-primary">
+                    <i class="fa-solid fa-address-book"></i> Save Contact
+                </a>
+                <a href="#" id="shareBtn" class="action-btn btn-secondary">
+                    <i class="fa-solid fa-share-nodes"></i> Share Card
+                </a>
+            </div>
+
+        </div><!-- /card-body -->
+
+        <!-- ── Footer ── -->
+        <div class="card-footer">
+            Powered by <a href="https://thedevendra001.github.io/QR-FOR-DIGITAL-CARD-/" target="_blank" rel="noopener">Agrawal Futurify AI Solutions</a>
+            &nbsp;·&nbsp; NFC &amp; QR enabled
+        </div>
+
+    </div><!-- /card-outer -->
+
+</div><!-- /cardContent -->
+
+<!-- ══════════════════════════════════════════════
+     STICKY FLOATING ACTION BAR
+══════════════════════════════════════════════ -->
+<div class="sticky-bar" id="stickyBar">
+    <div class="sticky-bar-inner">
+        <a href="#" id="stickyCall" class="sticky-btn sticky-btn-call">
+            <i class="fa-solid fa-phone"></i> Call
+        </a>
+        <a href="#" id="stickyWa" class="sticky-btn sticky-btn-wa">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="#" id="stickySave" class="sticky-btn sticky-btn-save">
+            <i class="fa-solid fa-address-book"></i> Save
+        </a>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // ⚠️ UPDATE THIS URL AFTER BACKEND DEPLOYMENT
+    // ============================================================
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzfq42nZFZZrTyAqnS7jPJPCPg49S7-cNi-DZwfHNe8IeY4F3v-LU1yzb1LJgfz2Slg/exec';
+
+    /* ── Basic click analytics (lightweight, no external SDK) ── */
+    function trackClick(type) {
+        try {
+            const slug = new URLSearchParams(window.location.search).get('slug') || '';
+            const store = JSON.parse(localStorage.getItem('_card_analytics') || '{}');
+            if (!store[slug]) store[slug] = {};
+            store[slug][type] = (store[slug][type] || 0) + 1;
+            store[slug]['last_seen'] = Date.now();
+            localStorage.setItem('_card_analytics', JSON.stringify(store));
+        } catch(e) {}
+    }
+    trackClick('view');
+
+    /* ── Hide loader ── */
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('pageLoader').classList.add('hidden');
+        }, 300);
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    if (!slug) {
+        showError('No card identifier found in URL. Please use the full link shared with you.');
+    } else {
+        // Show loading spinner while fetching
+        document.getElementById('loadingState').style.display = 'block';
+        loadCard(slug);
+    }
+
+    async function loadCard(slug) {
+        try {
+            const response = await fetch(`${WEB_APP_URL}?mode=card&slug=${encodeURIComponent(slug)}`);
+            const result   = await response.json();
+            console.log('API RESULT:', result);
+
+            if (result.status === 'error') {
+                showError(result.message);
+            } else if (result.status === 'success' && result.data) {
+                renderCard(result.data);
+                setupActionButtons(result.data);
+                setupStickyBar(result.data);
+            } else {
+                showError('Card data not found');
+            }
+        } catch (error) {
+            console.error('Load error:', error);
+            showError('Failed to load card. Please check your connection and try again.');
+        }
+    }
+
+    // ── Email helper ──
+    function getPrimaryEmail(data) {
+        return String(data.email || data.primaryEmail || data.contactEmail || '').trim();
+    }
+
+    // ── Google Drive image URL fixer ──
+    function fixDriveImageUrl(url) {
+        if (!url) return '';
+        url = String(url).trim();
+        let fileId = null;
+
+        if (url.includes('drive.google.com/uc?') || url.includes('drive.google.com/uc?export')) {
+            const match = url.match(/[?&]id=([^&]+)/);
+            if (match) fileId = match[1];
+        } else if (url.includes('/file/d/')) {
+            const match = url.match(/\/file\/d\/([^\/\?]+)/);
+            if (match) fileId = match[1];
+        } else if (url.includes('?id=') || url.includes('&id=')) {
+            const match = url.match(/[?&]id=([^&]+)/);
+            if (match) fileId = match[1];
+        }
+
+        if (fileId) return 'https://lh3.googleusercontent.com/d/' + fileId + '=s400';
+        if (url.includes('lh3.googleusercontent.com')) return url;
+        return url;
+    }
+
+    function normalizePhone(raw, defaultCountry = '91') {
+        const digits = String(raw || '').replace(/[^0-9]/g, '');
+        if (!digits) return '';
+        if (digits.length === 10) return defaultCountry + digits;
+        return digits;
+    }
+
+    function formatPhoneDisplay(digits) {
+        if (!digits) return '';
+        if (digits.length === 12 && digits.startsWith('91')) {
+            const num = digits.slice(2);
+            return `+91 ${num.slice(0,5)} ${num.slice(5)}`;
+        }
+        if (digits.length === 11 && digits.startsWith('1')) {
+            return `+1 (${digits.slice(1,4)}) ${digits.slice(4,7)}-${digits.slice(7)}`;
+        }
+        if (digits.length === 12 && digits.startsWith('44')) {
+            return `+44 ${digits.slice(2)}`;
+        }
+        if (digits.length === 11 && digits.startsWith('61')) {
+            return `+61 ${digits.slice(2)}`;
+        }
+        return '+' + digits;
+    }
+
+    // ============================================================
+    // RENDER CARD
+    // ============================================================
+    function renderCard(data) {
+        console.log('Card Data:', data);
+
+        document.getElementById('loadingState').style.display  = 'none';
+        document.getElementById('cardContent').style.display   = 'block';
+
+        // ── SEO meta update ──
+        const name = data.fullName || '';
+        const biz  = data.businessName || '';
+        const desc = data.designation ? `${data.designation}${biz ? ' at ' + biz : ''}` : biz;
+        document.title = name + (desc ? ' — ' + desc : '');
+        if (document.getElementById('metaDescription')) document.getElementById('metaDescription').content = `Connect with ${name}${desc ? ', ' + desc : ''}. Save contact, WhatsApp, email.`;
+        if (document.getElementById('ogTitle')) document.getElementById('ogTitle').content = name;
+        if (document.getElementById('ogDesc')) document.getElementById('ogDesc').content = desc || 'Digital business card';
+
+        // ── Schema.org ──
+        try {
+            const schema = {
+                "@context": "https://schema.org", "@type": "Person",
+                "name": name,
+                "jobTitle": data.designation || undefined,
+                "worksFor": biz ? { "@type": "Organization", "name": biz } : undefined,
+                "telephone": data.phone ? '+' + normalizePhone(data.phone) : undefined,
+                "email": getPrimaryEmail(data) || undefined,
+                "url": data.website || window.location.href
+            };
+            document.getElementById('personSchema').textContent = JSON.stringify(schema);
+        } catch(e) {}
+
+        // ── Profile image ──
+        const rawImageUrl   = data.imageUrl || data.photoUrl || data.photo || data.profileImage || '';
+        const imageUrl      = fixDriveImageUrl(rawImageUrl);
+        const imageContainer = document.getElementById('profileImageContainer');
+        const fallbackInitial = (name || '?').charAt(0).toUpperCase();
+
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src         = imageUrl + (imageUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+            img.crossOrigin = 'anonymous';
+            img.alt         = name;
+            img.className   = 'profile-image';
+            img.onload  = () => console.log('✅ Image loaded');
+            img.onerror = () => {
+                imageContainer.innerHTML = `<div class="profile-placeholder">${fallbackInitial}</div>`;
+            };
+            imageContainer.appendChild(img);
+        } else {
+            imageContainer.innerHTML = `<div class="profile-placeholder">${fallbackInitial}</div>`;
+        }
+
+        // ── Header text ──
+        document.getElementById('cardName').textContent = name;
+        if (data.designation) document.getElementById('cardDesignation').innerHTML = `<div class="card-designation">${data.designation}</div>`;
+        if (biz)              document.getElementById('cardBusiness').innerHTML    = `<div class="card-business">${biz}</div>`;
+
+        // ── Header quick-action chips ──
+        const phoneDigits = normalizePhone(data.phone);
+        const waDigits    = normalizePhone(data.whatsapp || data.phone || '');
+        const primaryEmail = getPrimaryEmail(data);
+        let chipsHTML = '';
+        if (phoneDigits) chipsHTML += `<a href="tel:+${phoneDigits}" class="header-chip chip-call" onclick="trackClick('chip_call')"><i class="fa-solid fa-phone"></i> Call</a>`;
+        if (waDigits)    chipsHTML += `<a href="https://wa.me/${waDigits}" class="header-chip chip-wa" target="_blank" onclick="trackClick('chip_wa')"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>`;
+        if (primaryEmail) chipsHTML += `<a href="mailto:${primaryEmail}" class="header-chip chip-email" onclick="trackClick('chip_email')"><i class="fa-solid fa-envelope"></i> Email</a>`;
+        document.getElementById('headerChips').innerHTML = chipsHTML;
+
+        // ── CONTACT ITEMS ──
+        const contactItems = document.getElementById('contactItems');
+        let contactHTML    = '';
+
+        if (phoneDigits) {
+            const phoneDisplay = formatPhoneDisplay(phoneDigits);
+            contactHTML += `
+                <a href="tel:+${phoneDigits}" class="contact-item" onclick="trackClick('phone')">
+                    <div class="contact-icon icon-phone"><i class="fa-solid fa-phone"></i></div>
+                    <div class="contact-text">
+                        <div class="contact-label">Phone</div>
+                        <span class="contact-value">${phoneDisplay}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right contact-arrow"></i>
+                </a>`;
+        }
+
+        if (waDigits) {
+            contactHTML += `
+                <a href="https://wa.me/${waDigits}" class="contact-item" target="_blank" onclick="trackClick('whatsapp')">
+                    <div class="contact-icon icon-whatsapp"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="contact-text">
+                        <div class="contact-label">WhatsApp</div>
+                        <span class="contact-value">Chat on WhatsApp</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right contact-arrow"></i>
+                </a>`;
+        }
+
+        if (primaryEmail) {
+            contactHTML += `
+                <a href="mailto:${primaryEmail}" class="contact-item" onclick="trackClick('email')">
+                    <div class="contact-icon icon-email"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="contact-text">
+                        <div class="contact-label">Email</div>
+                        <span class="contact-value">${primaryEmail}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right contact-arrow"></i>
+                </a>`;
+        }
+
+        if (data.address) {
+            const mapsUrl = data.maps || `https://maps.google.com/?q=${encodeURIComponent(data.address)}`;
+            contactHTML += `
+                <div class="contact-item">
+                    <div class="contact-icon icon-address"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="contact-text">
+                        <div class="contact-label">Address</div>
+                        <a href="${mapsUrl}" target="_blank" class="contact-value" onclick="trackClick('address')">${data.address}</a>
+                        <button class="address-copy-btn" onclick="copyAddress('${data.address.replace(/'/g,"\\'")}', this)" style="margin-top:7px">
+                            <i class="fa-regular fa-copy"></i> Copy Address
+                        </button>
+                    </div>
+                </div>`;
+
+            // ── Embedded Google Map ──
+            if (data.maps) {
+                const mapSrc = data.maps.includes('maps.google') || data.maps.includes('goo.gl')
+                    ? 'https://maps.google.com/maps?q=' + encodeURIComponent(data.address) + '&output=embed&z=15'
+                    : 'https://maps.google.com/maps?q=' + encodeURIComponent(data.address) + '&output=embed&z=15';
+                document.getElementById('mapFrame').src = mapSrc;
+                document.getElementById('mapSection').style.display = 'block';
+            }
+        }
+
+        if (data.upiId) {
+            const upiName = encodeURIComponent(data.fullName || data.businessName || 'Pay');
+            const upiLink = `upi://pay?pa=${encodeURIComponent(data.upiId)}&pn=${upiName}`;
+            contactHTML += `
+                <div class="contact-item">
+                    <div class="contact-icon icon-upi"><i class="fa-solid fa-credit-card"></i></div>
+                    <div class="contact-text">
+                        <div class="contact-label">UPI Payment</div>
+                        <div class="upi-block">
+                            <a href="${upiLink}" class="upi-pay-btn" onclick="trackClick('upi_pay')">
+                                <i class="fa-solid fa-bolt"></i> Pay Now
+                            </a>
+                            <button class="upi-copy-btn" onclick="copyUpi('${data.upiId}', this)">
+                                <i class="fa-regular fa-copy"></i> Copy ID
+                            </button>
+                        </div>
+                        <div class="upi-id-text">${data.upiId}</div>
+                    </div>
+                </div>`;
+        }
+
+        contactItems.innerHTML = contactHTML;
+
+        // ── CONTACT 2 ──
+        if (data.contact2Name || data.contact2Phone || data.contact2Email) {
+            const c2Block       = document.getElementById('contact2Block');
+            const c2PhoneDigits = normalizePhone(data.contact2Phone);
+            const c2PhoneDisp   = formatPhoneDisplay(c2PhoneDigits);
+            let c2HTML = `<div class="contact2-card">`;
+            if (data.contact2Name) c2HTML += `<div class="contact2-name">${data.contact2Name}</div>`;
+            if (data.contact2Role) c2HTML += `<div class="contact2-role">${data.contact2Role}</div>`;
+            c2HTML += `<div class="contact2-links">`;
+            if (c2PhoneDigits)      c2HTML += `<a href="tel:+${c2PhoneDigits}" class="contact2-link" onclick="trackClick('c2_call')"><i class="fa-solid fa-phone"></i> ${c2PhoneDisp}</a>`;
+            if (data.contact2Email) c2HTML += `<a href="mailto:${data.contact2Email}" class="contact2-link" onclick="trackClick('c2_email')"><i class="fa-solid fa-envelope"></i> Email</a>`;
+            if (c2PhoneDigits)      c2HTML += `<a href="https://wa.me/${c2PhoneDigits}" target="_blank" class="contact2-link" onclick="trackClick('c2_wa')"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>`;
+            c2HTML += `</div></div>`;
+            c2Block.innerHTML = c2HTML;
+            document.getElementById('contact2Section').style.display = 'block';
+        }
+
+        // ── SOCIAL ──
+        const socialLinks = document.getElementById('socialLinks');
+        let socialHTML = '';
+        if (data.instagram) socialHTML += `<a href="${data.instagram}" class="social-btn btn-instagram" target="_blank" onclick="trackClick('instagram')"><i class="fa-brands fa-instagram"></i> Instagram</a>`;
+        if (data.facebook)  socialHTML += `<a href="${data.facebook}"  class="social-btn btn-facebook"  target="_blank" onclick="trackClick('facebook')"><i class="fa-brands fa-facebook"></i> Facebook</a>`;
+        if (data.linkedin)  socialHTML += `<a href="${data.linkedin}"  class="social-btn btn-linkedin"  target="_blank" onclick="trackClick('linkedin')"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>`;
+        if (data.twitter)   socialHTML += `<a href="${data.twitter}"   class="social-btn btn-twitter"   target="_blank" onclick="trackClick('twitter')"><i class="fa-brands fa-x-twitter"></i> X</a>`;
+        if (data.youtube)   socialHTML += `<a href="${data.youtube}"   class="social-btn btn-youtube"   target="_blank" onclick="trackClick('youtube')"><i class="fa-brands fa-youtube"></i> YouTube</a>`;
+        if (data.telegram)  socialHTML += `<a href="${data.telegram}"  class="social-btn btn-telegram"  target="_blank" onclick="trackClick('telegram')"><i class="fa-brands fa-telegram"></i> Telegram</a>`;
+        if (socialHTML) {
+            socialLinks.innerHTML = socialHTML;
+            document.getElementById('socialSection').style.display = 'block';
+        }
+
+        // ── ADDITIONAL (website, products) ──
+        const additionalItems = document.getElementById('additionalItems');
+        let additionalHTML = '';
+        if (data.website) additionalHTML += `
+            <a href="${data.website}" target="_blank" class="contact-item" onclick="trackClick('website')">
+                <div class="contact-icon icon-web"><i class="fa-solid fa-globe"></i></div>
+                <div class="contact-text">
+                    <div class="contact-label">Website</div>
+                    <span class="contact-value">${data.website.replace(/^https?:\/\//, '')}</span>
+                </div>
+                <i class="fa-solid fa-chevron-right contact-arrow"></i>
+            </a>`;
+        if (data.productUrl) additionalHTML += `
+            <a href="${data.productUrl}" target="_blank" class="contact-item" onclick="trackClick('products')">
+                <div class="contact-icon icon-shop"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div class="contact-text">
+                    <div class="contact-label">Products &amp; Services</div>
+                    <span class="contact-value">View Products / Shop</span>
+                </div>
+                <i class="fa-solid fa-chevron-right contact-arrow"></i>
+            </a>`;
+        if (additionalHTML) {
+            additionalItems.innerHTML = additionalHTML;
+            document.getElementById('additionalSection').style.display = 'block';
+        }
+
+        // ── QR code (if provided by backend) ──
+        const qrUrl = data.qrUrl || data.qr_url || data.qrCode || data.qr || '';
+        if (qrUrl) {
+            document.getElementById('qrImage').src = qrUrl;
+            document.getElementById('qrSection').style.display = 'block';
+        }
+    }
+
+    // ============================================================
+    // COPY HELPERS
+    // ============================================================
+    function copyUpi(upiId, btn) {
+        navigator.clipboard.writeText(upiId).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+            btn.style.background = '#10b981'; btn.style.color = '#fff'; btn.style.borderColor = '#10b981';
+            setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        }).catch(() => { alert('UPI ID: ' + upiId); });
+    }
+
+    function copyAddress(address, btn) {
+        navigator.clipboard.writeText(address).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+            btn.style.background = '#10b981'; btn.style.color = '#fff'; btn.style.borderColor = '#10b981';
+            setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        }).catch(() => { alert('Address: ' + address); });
+    }
+
+    // ============================================================
+    // STICKY BAR SETUP
+    // ============================================================
+    function setupStickyBar(data) {
+        const bar    = document.getElementById('stickyBar');
+        const phone  = normalizePhone(data.phone);
+        const wa     = normalizePhone(data.whatsapp || data.phone || '');
+
+        if (phone) {
+            document.getElementById('stickyCall').href = 'tel:+' + phone;
+            document.getElementById('stickyCall').addEventListener('click', () => trackClick('sticky_call'));
+        } else {
+            document.getElementById('stickyCall').style.display = 'none';
+        }
+        if (wa) {
+            document.getElementById('stickyWa').href = 'https://wa.me/' + wa;
+            document.getElementById('stickyWa').target = '_blank';
+            document.getElementById('stickyWa').addEventListener('click', () => trackClick('sticky_wa'));
+        } else {
+            document.getElementById('stickyWa').style.display = 'none';
+        }
+        document.getElementById('stickySave').addEventListener('click', (e) => {
+            e.preventDefault();
+            trackClick('sticky_save');
+            downloadVCard(data);
+        });
+
+        // Reveal bar with short delay for visual polish
+        setTimeout(() => { bar.style.display = 'block'; }, 600);
+    }
+
+    // ============================================================
+    // ACTION BUTTONS
+    // ============================================================
+    function setupActionButtons(data) {
+        document.getElementById('saveContactBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            trackClick('save_contact');
+            downloadVCard(data);
+        });
+        document.getElementById('shareBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            trackClick('share');
+            shareCard(data);
+        });
+    }
+
+    // ── vCard download ──
+    function downloadVCard(data) {
+        const vcPhone = normalizePhone(data.phone);
+        const vcWa    = normalizePhone(data.whatsapp || data.phone);
+        const vcEmail = getPrimaryEmail(data);
+        let vcard  = 'BEGIN:VCARD\nVERSION:3.0\n';
+        vcard += `FN:${data.fullName}\n`;
+        if (data.businessName) vcard += `ORG:${data.businessName}\n`;
+        if (data.designation)  vcard += `TITLE:${data.designation}\n`;
+        if (vcPhone)  vcard += `TEL;TYPE=CELL,VOICE:+${vcPhone}\n`;
+        if (vcWa && vcWa !== vcPhone) vcard += `TEL;TYPE=WORK,VOICE:+${vcWa}\n`;
+        if (vcEmail)  vcard += `EMAIL;TYPE=INTERNET,PREF:${vcEmail}\n`;
+        if (data.website) vcard += `URL:${data.website}\n`;
+        if (data.address) vcard += `ADR:;;${data.address};;;;\n`;
+        if (data.instagram) vcard += `X-SOCIALPROFILE;TYPE=instagram:${data.instagram}\n`;
+        if (data.linkedin)  vcard += `X-SOCIALPROFILE;TYPE=linkedin:${data.linkedin}\n`;
+        vcard += `NOTE:Digital card powered by Agrawal Futurify AI Solutions\n`;
+        vcard += 'END:VCARD';
+
+        const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href  = url;
+        link.download = `${(data.fullName || 'contact').replace(/\s+/g, '_')}.vcf`;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ── Native share ──
+    function shareCard(data) {
+        const shareData = {
+            title: data.fullName,
+            text: `Connect with ${data.fullName}${data.businessName ? ' from ' + data.businessName : ''} — digital business card`,
+            url: window.location.href
+        };
+        if (navigator.share) {
+            navigator.share(shareData).catch(err => console.log('Share cancelled:', err));
+        } else {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('✅ Card link copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy this card link:', window.location.href);
+            });
+        }
+    }
+
+    // ── Error display ──
+    function showError(message) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('cardContent').style.display  = 'none';
+        document.getElementById('errorState').style.display   = 'block';
+        document.getElementById('errorMessage').textContent   = message;
+    }
+</script>
+</body>
+</html>
